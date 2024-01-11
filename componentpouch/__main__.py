@@ -1,9 +1,11 @@
 #!/usr/bin/env poetry run python
 
-import typer
-import subprocess
 import re
-from typing import List
+import subprocess
+from typing import List, Optional
+
+import requests
+import typer
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -36,11 +38,13 @@ def install(tools: List[str] = typer.Option(..., help="List of tools to install.
         typer.echo(f"Installing {tool}...")
         allowed_tools[tool.lower()]()
 
+
 @app.command()
 def repo(
     command: str = typer.Argument(..., help="Repository command: list, clone"),
-    regex: str = typer.Option(None, help="Regex to filter repositories (used with 'list' command)"),
-    repo_name: str = typer.Option(None, help="Name of the repository to clone (used with 'clone' command)"),
+    regex: Optional[str] = typer.Option(None, help="Regex to filter repositories (used with 'list' command)"),
+    repo_name: Optional[str] = typer.Option(None, help="Name of the repository to clone (used with 'clone' command)"),
+    username: str = typer.Option("gianfrancodemarco", help="GitHub username"),
 ):
     """Manage repositories"""
     allowed_commands = ['list', 'clone']
@@ -50,34 +54,43 @@ def repo(
         raise typer.Abort()
 
     if command == 'list':
-        list_repos(regex)
+        list_repos(username, regex)
     elif command == 'clone':
-        clone_repo(repo_name)
+        clone_repo(username, repo_name)
 
-def list_repos(regex: str = None):
+
+def list_repos(username: str, regex: Optional[str] = None):
     """List repositories with optional regex filter"""
     try:
-        repos = subprocess.check_output(["git", "ls-remote", "--heads", "https://github.com/gianfrancodemarco/repo.git"])
-        repos = repos.decode("utf-8").splitlines()
+        # Fetch the list of repositories for the user
+        response = requests.get(f"https://api.github.com/users/{username}/repos")
+        response.raise_for_status()
+        repos = response.json()
 
         if regex:
             regex_pattern = re.compile(regex)
-            filtered_repos = [repo for repo in repos if regex_pattern.search(repo)]
+            filtered_repos = [repo["html_url"] for repo in repos if regex_pattern.search(repo["name"])]
             typer.echo(f"Filtered Repositories with regex '{regex}':")
             for repo in filtered_repos:
                 typer.echo(repo)
         else:
             typer.echo("All Repositories:")
             for repo in repos:
-                typer.echo(repo)
+                typer.echo(repo["html_url"])
 
-    except subprocess.CalledProcessError:
-        typer.echo("Error: Unable to list repositories.")
+    except requests.RequestException as e:
+        typer.echo(f"Error: Unable to list repositories. {e}")
 
-def clone_repo(repo_name: str):
+
+def clone_repo(username: str, repo_name: str):
     """Clone a repository by name"""
+
+    if not repo_name:
+        typer.echo("Error: Repository name is required.")
+        raise typer.Abort()
+
     try:
-        repo_url = f"https://github.com/gianfrancodemarco/{repo_name}.git"
+        repo_url = f"https://github.com/{username}/{repo_name}.git"
         subprocess.run(["git", "clone", repo_url])
         typer.echo(f"Repository '{repo_name}' cloned successfully.")
     except subprocess.CalledProcessError:
