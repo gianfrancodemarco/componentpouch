@@ -7,21 +7,25 @@ import typer
 
 app = typer.Typer()
 
+
 @app.command()
 def list(
     username: str = typer.Option(..., help="GitHub username"),
-    regex: Optional[str] = typer.Option(None, help="Regex to filter repositories (used with 'list' command)"),
+    regex: Optional[str] = typer.Option(
+        None, help="Regex to filter repositories (used with 'list' command)"),
 ):
     """Lst repositories with optional regex filter"""
     try:
         # Fetch the list of repositories for the user
-        response = requests.get(f"https://api.github.com/users/{username}/repos")
+        response = requests.get(
+            f"https://api.github.com/users/{username}/repos")
         response.raise_for_status()
         repos = response.json()
 
         if regex:
             regex_pattern = re.compile(regex)
-            filtered_repos = [repo["html_url"] for repo in repos if regex_pattern.search(repo["name"])]
+            filtered_repos = [repo["html_url"]
+                              for repo in repos if regex_pattern.search(repo["name"])]
             typer.echo(f"Filtered Repositories with regex '{regex}':")
             for repo in filtered_repos:
                 typer.echo(repo)
@@ -37,7 +41,8 @@ def list(
 @app.command()
 def clone(
     username: str = typer.Option(..., help="GitHub username"),
-    repo_name: str = typer.Option(..., help="Name of the repository to clone (used with 'clone' command)"),
+    repo_name: str = typer.Option(
+        ..., help="Name of the repository to clone (used with 'clone' command)"),
 ):
     """Clone a repository by name"""
     try:
