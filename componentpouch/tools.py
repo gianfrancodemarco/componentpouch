@@ -34,17 +34,38 @@ def install_kubectl():
     typer.echo("🚀 Installing kubectl...")
     subprocess.run(["sudo", "apt-get", "update"])
     subprocess.run(["sudo", "apt-get", "install", "-y", "apt-transport-https"])
-    subprocess.run(["curl", "-s", "https://packages.cloud.google.com/apt/doc/apt-key.gpg", "|", "sudo", "apt-key", "--keyring", "/usr/share/keyrings/kubernetes-archive-keyring.gpg", "add", "-"])
-    subprocess.run(["echo", "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main", "|", "sudo", "tee", "/etc/apt/sources.list.d/kubernetes.list", ">", "/dev/null"])
+    subprocess.run(["curl",
+                    "-s",
+                    "https://packages.cloud.google.com/apt/doc/apt-key.gpg",
+                    "|",
+                    "sudo",
+                    "apt-key",
+                    "--keyring",
+                    "/usr/share/keyrings/kubernetes-archive-keyring.gpg",
+                    "add",
+                    "-"])
+    subprocess.run(
+        [
+            "echo",
+            "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main",
+            "|",
+            "sudo",
+            "tee",
+            "/etc/apt/sources.list.d/kubernetes.list",
+            ">",
+            "/dev/null"])
     subprocess.run(["sudo", "apt-get", "update"])
     subprocess.run(["sudo", "apt-get", "install", "-y", "kubectl"])
     typer.echo("✅ kubectl installation completed.")
 
+
 def install_kind():
     typer.echo("🚀 Installing kind...")
-    subprocess.run(["curl", "-Lo", "/usr/local/bin/kind", "https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64"])
+    subprocess.run(["curl", "-Lo", "/usr/local/bin/kind",
+                   "https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64"])
     subprocess.run(["chmod", "+x", "/usr/local/bin/kind"])
     typer.echo("✅ kind installation completed.")
+
 
 def install_all():
     typer.echo("🚀 Installing all tools, might take a while...")
@@ -55,6 +76,7 @@ def install_all():
     install_tmux()
     install_vscode()
     typer.echo("✅ All tools installation completed.")
+
 
 allowed_tools = {
     '*': install_all,
