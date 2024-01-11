@@ -4,7 +4,7 @@ echo "🚀 Welcome to ComponentPouch Setup! 🚀"
 
 # Install Poetry (if not already installed)
 if command -v poetry &> /dev/null; then
-    echo "🛠️ Poetry is already installed. Let's get started!"
+    echo "🛠️  Poetry is already installed. Let's get started!"
 else
     echo "🌟 Installing Poetry..."
     curl -sSL https://install.python-poetry.org | python3 -
@@ -24,7 +24,7 @@ poetry install
 # Create a wrapper script in ~/.local/bin/
 echo "🚀 Creating 'componentpouch' wrapper script in ~/.local/bin/"
 echo '#!/bin/bash' > ~/.local/bin/componentpouch
-echo 'typer componentpouch.__main__ run "$@"' >> ~/.local/bin/componentpouch
+echo 'poetry run typer componentpouch.__main__ run "$@"' >> ~/.local/bin/componentpouch
 chmod +x ~/.local/bin/componentpouch
 
 echo "✨ ComponentPouch installation completed! ✨"
