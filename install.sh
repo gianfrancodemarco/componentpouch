@@ -19,7 +19,7 @@ poetry build
 poetry install
 
 # Installing completion for typer
-typer --install-completion
+componentpouch --install-completion
 
 echo "✨ ComponentPouch installation completed! ✨"
 echo "🚀 You can now run 'componentpouch' from the command line to execute the ComponentPouch module."
