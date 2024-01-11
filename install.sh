@@ -14,18 +14,12 @@ fi
 echo "📦 Installing ComponentPouch globally..."
 
 # Build and install the package
-poetry config virtualenvs.create false --local
+poetry config virtualenvs.create false
 poetry build
 poetry install
 
 # Installing completion for typer
-# typer --install-completion
-
-# Create a wrapper script in ~/.local/bin/
-echo "🚀 Creating 'componentpouch' wrapper script in ~/.local/bin/"
-echo '#!/bin/bash' > ~/.local/bin/componentpouch
-echo 'poetry run typer componentpouch.__main__ run "$@"' >> ~/.local/bin/componentpouch
-chmod +x ~/.local/bin/componentpouch
+typer --install-completion
 
 echo "✨ ComponentPouch installation completed! ✨"
 echo "🚀 You can now run 'componentpouch' from the command line to execute the ComponentPouch module."

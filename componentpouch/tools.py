@@ -1,41 +1,9 @@
 import subprocess
-from typing import List, Optional
+from typing import List
 
 import typer
 
-def tools(
-    command: str = typer.Argument(..., help="Tool command: list, install"),
-    tools: Optional[List[str]] = typer.Option(None, help="List of tools to install (used with 'install' command)"),
-):
-    """Manage tools"""
-    allowed_commands = ['list', 'install']
-
-    if command not in allowed_commands:
-        typer.echo(f"Error: {command} is not a valid command. Valid commands are: {', '.join(allowed_commands)}")
-        raise typer.Abort()
-
-    if command == 'list':
-        typer.echo("Available tools:")
-        for tool in allowed_tools:
-            typer.echo(tool)
-    elif command == 'install':
-        if not tools:
-            typer.echo("Error: List of tools is required.")
-            raise typer.Abort()
-
-        install(tools)
-
-def install(tools: List[str]):
-    """Install required tools"""
-
-    for tool in tools:
-        if tool.lower() not in allowed_tools:
-            typer.echo(f"Error: {tool} is not a valid tool. Valid tools are: {', '.join(allowed_tools)}")
-            raise typer.Abort()
-
-        typer.echo(f"Installing {tool}...")
-        allowed_tools[tool.lower()]()
-
+app = typer.Typer()
 
 def install_vscode():
     typer.echo("🚀 Installing VSCode...")
@@ -69,3 +37,25 @@ allowed_tools = {
     'docker': install_docker,
     'kubectl': install_kubectl
 }
+
+@app.command(name='list')
+def _list():
+    for tool in allowed_tools:
+        typer.echo(tool)
+
+@app.command()
+def install(
+    tools: List[str] = typer.Argument(..., help="List of tools to install (used with 'install' command)", autocompletion=lambda: list(allowed_tools.keys())),
+):
+    """Install required tools"""
+    for tool in tools:
+        if tool.lower() not in allowed_tools:
+            typer.echo(f"Error: {tool} is not a valid tool. Valid tools are: {', '.join(allowed_tools)}")
+            raise typer.Abort()
+
+        typer.echo(f"Installing {tool}...")
+        allowed_tools[tool.lower()]()
+
+
+if __name__ == "__main__":
+    app()

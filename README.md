@@ -45,22 +45,12 @@ componentpouch --help
 ```
 
 ## Command Reference 📚
+You can find the command reference [here](COMMANDS.md).  
+To regenerate the command reference after modifications, run:
 
-- **tools**: Manage tools.
-  - **list**: List all available tools to install.  
-    Example: `componentpouch tools list`
-
-  - **install**: Install specified tools.   
-    Example: `componentpouch tools install --tools VSCode tmux k9s`  
-
-
-- **repo**: Manage repositories.
-- 
-  - **list**: List all repositories.  
-    Example: `componentpouch repo list`
-
-  - **clone**: Clone a repository.  
-    Example: `componentpouch repo clone --repo_name myrepo`
+```bash
+typer componentpouch.__main__ utils docs --name componentpouch --output COMMANDS.md
+```
 
 ## Contributing 🤝
 
