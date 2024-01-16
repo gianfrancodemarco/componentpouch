@@ -14,7 +14,7 @@ fi
 echo "📦 Installing ComponentPouch globally..."
 
 # Build and install the package
-poetry config virtualenvs.create false
+poetry config virtualenvs.create true
 poetry build
 poetry install
 
